@@ -1,8 +1,26 @@
+import { useState } from 'react'
 import ChatbotIcon from './components/ChatbotIcon.jsx'
 import ChatForm from './components/ChatForm.jsx'
 import ChatMessage from './components/ChatMessage.jsx'
 
 function App() {
+  const [chatHistory, setChatHistory] = useState([])
+
+  const getBotResponse = async (history) => {
+    history = history.map((msg) => ({role: msg.role, "parts": [{text: msg.text}]}))
+
+    requestParams = {
+      method: 'POST',
+      'Content-Type': 'application/json',
+      contents: history
+    }
+
+    // try {
+    //   const APIResponse = fetch(import.meta.process.env.VITE_API_URL)
+      
+    // } catch (error) {
+    // }
+  }
 
   return (
     <div className="container">
@@ -31,12 +49,14 @@ function App() {
               Hey there! 👋 <br /> How can I help you today?
             </p>
           </div>
-            <ChatMessage />
+          {chatHistory.map((message, index) => (
+            <ChatMessage key={index} message={message}/>
+          ))}
         </div>
 
         {/* Chat footer */}
         <div className="chat_footer">
-          <ChatForm />
+          <ChatForm setChatHistory={setChatHistory} getBotResponse={getBotResponse} chatHistory={chatHistory}/>
         </div>
       </div>
 
