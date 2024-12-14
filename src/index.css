@@ -136,6 +136,7 @@ i {
 .chat_body .message .message_text {
     padding: 12px 16px;
     max-width: 75%;
+    /* q */
     word-wrap: break-word;
     white-space: pre-line;
     font-size: 0.95rem;
