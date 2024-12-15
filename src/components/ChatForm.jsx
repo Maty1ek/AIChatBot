@@ -15,7 +15,7 @@ const ChatForm = ({chatHistory, setChatHistory, getBotResponse}) => {
         setTimeout(() => {
             setChatHistory(prev => [...prev, {role: 'model', text: 'Thinking...'}])
             
-            getBotResponse([...chatHistory, {role: 'user', text: userMsg}])
+            getBotResponse([...chatHistory, {role: 'user', text: `based on the description on the top, respond to this message:${userMsg}`}])
         }, 600)
         inputRef.current.value = ''
     }
