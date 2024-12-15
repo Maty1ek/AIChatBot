@@ -11,6 +11,7 @@ function App() {
     isHidden: true
   }])
   const [chatToggle, setChatToggle] = useState(true)
+  const [canSend, setCanSend] = useState(true)
   const chatRef = useRef()
 
   useEffect(() => {
@@ -19,6 +20,7 @@ function App() {
 
   const updateChatHistory = (botResponse, isError = false) => {
     setChatHistory(prev => [...prev.filter((msg) => msg.text !== 'Thinking...'), { role: 'model', text: botResponse, isError }])
+    setCanSend(true)
   }
 
   const getBotResponse = async (history) => {
@@ -86,7 +88,7 @@ function App() {
 
           {/* Chat footer */}
           <div className="chat_footer">
-            <ChatForm setChatHistory={setChatHistory} getBotResponse={getBotResponse} chatHistory={chatHistory} />
+            <ChatForm setChatHistory={setChatHistory} getBotResponse={getBotResponse} chatHistory={chatHistory} canSend={canSend} setCanSend={setCanSend}/>
           </div>
         </div>
       )}
