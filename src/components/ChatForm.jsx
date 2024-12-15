@@ -1,25 +1,27 @@
 import React, { useRef } from 'react'
 
-const ChatForm = ({ chatHistory, setChatHistory, generateBotResponse }) => {
+const ChatForm = ({chatHistory, setChatHistory, getBotResponse}) => {
     const inputRef = useRef()
 
-    const handleFormSubmit = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault()
-        const userMessage = inputRef.current.value.trim()
-        if (!userMessage) return
-        inputRef.current.value = ''
 
-        setChatHistory(history => [...history, { role: 'user', text: userMessage }])
-        
+        const userMsg = inputRef.current.value
+
+        if(!userMsg) return
+
+        setChatHistory(prev => [...prev, {role: 'user', text: userMsg}])
+
         setTimeout(() => {
-            setChatHistory(history => [...history, { role: 'model', text: 'Thinking...' }])
+            setChatHistory(prev => [...prev, {role: 'model', text: 'Thinking...'}])
             
-            generateBotResponse([...chatHistory, { role: 'user', text: `Using the details provided above, please address this query: ${userMessage}` }])
+            getBotResponse([...chatHistory, {role: 'user', text: userMsg}])
         }, 600)
+        inputRef.current.value = ''
     }
 
     return (
-        <form action="#" className="chat_form" onSubmit={handleFormSubmit}>
+        <form action="#" className="chat_form" onSubmit={handleSubmit}>
             <input ref={inputRef} type="text" placeholder='Message...' className="message_input" required />
             <button>
                 <i class="fa-solid fa-chevron-up"></i>
