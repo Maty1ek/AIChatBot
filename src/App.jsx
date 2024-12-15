@@ -12,6 +12,10 @@ function App() {
     chatRef.current.lastElementChild.scrollIntoView({ behavior: 'smooth' })
   }, [chatHistory])
 
+  const updateChatHistory = (botResponse, isError = false) => {
+    setChatHistory(prev => [...prev.filter((msg) => msg.text !== 'Thinking...'), { role: 'model', text: botResponse, isError }])
+  }
+
   const getBotResponse = async (history) => {
     history = history.map(({ role, text }) => ({ role, "parts": [{ text }] }))
 
@@ -29,15 +33,17 @@ function App() {
       const APIResponse = await fetch(import.meta.env.VITE_API_URL, requestParams)
       const data = await APIResponse.json()
 
+      if (!APIResponse.ok) throw new Error(data.error.message || 'Something went wrong')
+
       const botResponse = await data.candidates[0].content.parts[0].text
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
         .replace(/\*(.*?)\*/g, '<em>$1</em>')             // Italics
         .replace(/## (.*?)\n/g, '<h2>$1</h2>')           // H2 Headings
         .replace(/# (.*?)\n/g, '<h1>$1</h1>');
 
-      setChatHistory(prev => [...prev.filter((msg) => msg.text !== 'Thinking...'), { role: 'model', text: botResponse }])
+      updateChatHistory(botResponse)
     } catch (error) {
-      console.log(error)
+      updateChatHistory('Sorry, the bot is not responding. Please, try again later', true)
     }
   }
 

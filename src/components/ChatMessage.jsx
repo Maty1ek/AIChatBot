@@ -7,7 +7,7 @@ const ChatMessage = ({message}) => {
     const sanitizedHTML = DOMPurify.sanitize(message.text);
 
     return (
-        <div className={`message ${message.role}_message `}>
+        <div className={`message ${message.role}_message ${message.isError && 'error'}`}>
             {message.role === 'model' && <ChatbotIcon />}
             <p className='message_text' dangerouslySetInnerHTML={{ __html: sanitizedHTML }}>
             </p>
