@@ -6,14 +6,16 @@ const ChatForm = ({chatHistory, setChatHistory, getBotResponse}) => {
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        if(!inputRef.current.value) return
+        const userMsg = inputRef.current.value
 
-        setChatHistory(prev => [...prev, {role: 'user', text: inputRef.current.value}])
+        if(!userMsg) return
+
+        setChatHistory(prev => [...prev, {role: 'user', text: userMsg}])
 
         setTimeout(() => {
             setChatHistory(prev => [...prev, {role: 'model', text: 'Thinking...'}])
             
-            getBotResponse([chatHistory, {role: 'user', text: inputRef.current.value}])
+            getBotResponse([...chatHistory, {role: 'user', text: userMsg}])
         }, 600)
         inputRef.current.value = ''
     }

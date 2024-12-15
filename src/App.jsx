@@ -1,25 +1,43 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ChatbotIcon from './components/ChatbotIcon.jsx'
 import ChatForm from './components/ChatForm.jsx'
 import ChatMessage from './components/ChatMessage.jsx'
 
 function App() {
   const [chatHistory, setChatHistory] = useState([])
+  const chatRef = useRef()
+
+  useEffect(() => {
+    chatRef.current.lastElementChild.scrollIntoView({behavior: 'smooth'})
+  }, [chatHistory])
 
   const getBotResponse = async (history) => {
-    history = history.map((msg) => ({role: msg.role, "parts": [{text: msg.text}]}))
+    history = history.map(({ role, text }) => ({ role, "parts": [{ text }] }))
 
-    requestParams = {
+    const requestParams = {
       method: 'POST',
-      'Content-Type': 'application/json',
-      contents: history
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: history
+      })
     }
 
-    // try {
-    //   const APIResponse = fetch(import.meta.process.env.VITE_API_URL)
-      
-    // } catch (error) {
-    // }
+    try {
+      const APIResponse = await fetch(import.meta.env.VITE_API_URL, requestParams)
+      const data = await APIResponse.json()
+
+      const botResponse = await data.candidates[0].content.parts[0].text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')             // Italics
+        .replace(/## (.*?)\n/g, '<h2>$1</h2>')           // H2 Headings
+        .replace(/# (.*?)\n/g, '<h1>$1</h1>');
+
+      setChatHistory(prev => [...prev.filter((msg) => msg.text !== 'Thinking...'), { role: 'model', text: botResponse }])
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -42,7 +60,7 @@ function App() {
         </div>
 
         {/* Chatbot body */}
-        <div className="chat_body">
+        <div className="chat_body" ref={chatRef}>
           <div className="message model_message">
             <ChatbotIcon />
             <p className='message_text'>
@@ -50,13 +68,13 @@ function App() {
             </p>
           </div>
           {chatHistory.map((message, index) => (
-            <ChatMessage key={index} message={message}/>
+            <ChatMessage key={index} message={message} />
           ))}
         </div>
 
         {/* Chat footer */}
         <div className="chat_footer">
-          <ChatForm setChatHistory={setChatHistory} getBotResponse={getBotResponse} chatHistory={chatHistory}/>
+          <ChatForm setChatHistory={setChatHistory} getBotResponse={getBotResponse} chatHistory={chatHistory} />
         </div>
       </div>
 
