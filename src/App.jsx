@@ -78,7 +78,9 @@ function App() {
             <div className="message model_message">
               <ChatbotIcon />
               <p className='message_text'>
-                Hey there! 👋 <br /> How can I help you today?
+                Hey there! 👋 <br /> I am your AI assistant. I can answer your questions about our cafe and help you!
+                <br />
+                Привет! 👋 <br /> Я ваш ИИ-помощник. Я могу ответить на ваши вопросы о нашем кафе и помочь вам!
               </p>
             </div>
             {chatHistory.map((message, index) => (
